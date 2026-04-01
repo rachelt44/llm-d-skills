@@ -3,7 +3,7 @@ name: run-llm-d-benchmark
 description: Runs a benchmark workload against an already deployed llm-d stack (high-performance distributed LLM inference) using llm-d-benchmark tooling. Use this skill whenever the user wants to benchmark, load test, measure performance, run inference-perf/guidellm/vllm-benchmark, evaluate throughput or latency, or compare llm-d configuration strategies — even if they don't say "benchmark" explicitly.
 ---
 
-# Run llm-d Benchmark Skill
+# Run llm-d Benchmark
 
 ## Purpose
 

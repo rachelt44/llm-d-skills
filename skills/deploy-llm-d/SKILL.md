@@ -1,9 +1,9 @@
 ---
 name: deploy-llm-d
-description: Configure and deploy llm-d (high-performance distributed LLM inference) on existing Kubernetes and OpenShift clusters using Well-lit Path guides. Use this skill when users want to deploy llm-d on Kubernetes or OpenShift.
+description: Configure and deploy an llm-d stack (high-performance distributed LLM inference) on an existing Kubernetes and OpenShift cluster using Well-lit Path guides. Use this skill when users want to deploy llm-d on Kubernetes or OpenShift.
 ---
 
-# deploy-llm-d Skill
+# Deploy llm-d Stack
 ## 📋 Command Execution Notice
 
 **Before executing any command, I will:**

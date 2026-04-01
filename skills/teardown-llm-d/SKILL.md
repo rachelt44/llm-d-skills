@@ -3,7 +3,7 @@ name: teardown-llm-d-stack
 description: Tears down, removes, cleans up, or undeploys a deployed llm-d stack on Kubernetes. Use this skill whenever the user wants to remove or destroy an llm-d deployment, clean up a namespace after inference workloads, uninstall helm releases for llm-d, or free up cluster resources used by llm-d — even if they don't say "teardown" explicitly. Also handles partial cleanup (e.g., remove only the model service, keep the gateway).
 ---
 
-# Teardown llm-d Stack Skill
+# Teardown llm-d Stack
 
 ## Purpose
 
