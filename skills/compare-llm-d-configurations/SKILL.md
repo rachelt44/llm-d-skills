@@ -183,9 +183,11 @@ $COMPARISON_DIR/run-b/results
 
 ### 2.3 Save Run B State
 
-Write `$COMPARISON_DIR/run-b/run_state.json` with the same structure as Run A.
+Write `$COMPARISON_DIR/run-b/run_state.json` with the same structure as Run A. Perform the same check of successful benchmark completion for Run B as in Phase 1.3.
 
 ### 2.4 Teardown Run B Stack
+
+Important: **Proceed to this step only if the benchmark run was successful, or if the user explicitly asked to tear down Run B stack.**
 
 Same constraints as Phase 1.4: remove Helm releases and routing, keep PVCs and namespace.
 
