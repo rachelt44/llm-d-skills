@@ -106,6 +106,8 @@ env:
     value: &namespace
 ```    
 
+If the variable `namespace` is not already defined, use the value of NAMESPACE you located in step 1.
+
 ### Step 8: Verify the final configuration
 
 Display the instantiated configuration file to the user for verification. If the user wants to change any of the configuration parameters, update the instantiated configuration file based on user feedback.
@@ -144,14 +146,42 @@ Note that the benchmark harness pod may still be running also after the benchmar
 
 Ask the user for a path to store the results. Save the benchmarking results by copying them from the BENCHMARK_PVC to a local `results` directory inside the path specified by the user.  This step requires locating the results of the current benchmarkr run in the BENCHMARK_PVC. This can be performed using the command ` kubectl exec -n $NAMESPACE llmdbench-harness-launcher -- ls -ltr /requests/`.
 
-### Step 12: Run analyses and save them
+### Step 12: Collect vLLM logs from pods
+
+Collect logs from all vLLM pods in the namespace to aid in debugging and performance analysis. First, identify the vLLM pods:
+
+```bash
+kubectl get pods -n $NAMESPACE -l app.kubernetes.io/component=vllm -o name
+```
+
+If no pods are found with that label, try alternative selectors:
+```bash
+kubectl get pods -n $NAMESPACE -l app=vllm -o name
+kubectl get pods -n $NAMESPACE | grep -i vllm
+```
+
+For each vLLM pod found, collect its logs and save to the results directory:
+
+```bash
+mkdir -p <results-path>/results/logs
+for pod in $(kubectl get pods -n $NAMESPACE -l app.kubernetes.io/component=vllm -o name); do
+  pod_name=$(echo $pod | sed 's|pod/||')
+  kubectl logs -n $NAMESPACE $pod_name --timestamps > "<results-path>/results/logs/${pod_name}.log"
+done
+```
+
+If the `--timestamps` flag is not supported or causes issues, omit it. If a pod has multiple containers, add `-c <container-name>` to specify the vLLM container.
+
+Notify the user of which pod logs were collected and where they are saved.
+
+### Step 13: Run analyses and save them
 
 Ask the user whether an analysis of raw results is requested. For example, create specific graphs or tables from the raw metric reporting. The user can also tell you what analysis is needed. If the user requests for an analysis, create corresponding analysis scripts, run them, and store them along with their results in the `analysis` directory inside the `results` directory.
 
 
 #### Execution Rules
 
-1. **Run every command** from Steps 1–12 in order using `execute_command`.
+1. **Run every command** from Steps 1–13 in order using `execute_command`.
 2. **After each command**, inspect the output:
    - If the command **succeeds** → proceed to the next command.
    - If the command **fails** → diagnose the error, apply a fix, and re-run before continuing.
