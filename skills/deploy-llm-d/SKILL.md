@@ -51,9 +51,9 @@ Each Well-Lit Path guide contains its own prerequisites section. Common prerequi
 1. **LLMD_PATH environment variable** - Point to the local llm-d repository clone
 2. **Client Tools** - `kubectl` or `oc`, `helm`, `kustomize`, `git`
 3. **HuggingFace Token** - Secret `llm-d-hf-token` with key `HF_TOKEN` in target namespace when the selected model requires it
-4. **Gateway Provider** - only when the user selects Gateway API proxy mode; see [`guides/prereq/gateway-provider/README.md`](../llm-d/guides/prereq/gateway-provider/README.md)
+4. **Gateway Provider** - only when the user selects Gateway API proxy mode; see `${LLMD_PATH}/guides/prereq/gateway-provider/README.md`
 5. **Infrastructure** - sufficient cluster resources for the selected guide
-6. **Benchmark tooling** (optional) - [`llmdbenchmark`](../llm-d-benchmark/README.md:14) for benchmarking workflows
+6. **Benchmark tooling** (optional) - use the local `llm-d-benchmark` repository README and CLI docs for benchmarking workflows
 
 **Refer to the specific guide's README for detailed prerequisites.**
 
