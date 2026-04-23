@@ -27,7 +27,7 @@ All changes must be made exclusively inside the designated project namespace. Ne
 
 ## Overview
 
-llm-d provides current Well-Lit Path deployment guides in the `guides/` directory of `${LLMD_PATH}`. The guide index at `${LLMD_PATH}/guides/README.md` is the source of truth for available deployment paths and supporting guides.
+llm-d provides Well-Lit Path deployment guides in the `guides/` directory of `${LLMD_PATH}`. The guide index at `${LLMD_PATH}/guides/README.md` is the main reference for available deployment paths and supporting guides.
 
 **To discover available Well-Lit Paths**, the agent will:
 1. Read `${LLMD_PATH}/guides/README.md`
