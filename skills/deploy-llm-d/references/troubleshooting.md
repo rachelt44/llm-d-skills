@@ -316,3 +316,99 @@
    - Save deployment script
    - Note any customizations made
    - Record resource requirements and performance metrics
+
+## Configuration Optimization Issues
+
+### Missing Kustomization Patches in Optimized Baseline Guide
+
+**Issue**: The `optimized-baseline` guide is missing important volume mounts and environment variables that are present in other guides like `precise-prefix-cache-aware`, `pd-disaggregation`, and `tiered-prefix-cache`.
+
+**Missing Optimizations**:
+
+1. **Triton Cache Volume Mount**
+   - **Problem**: The `/.triton` directory is not writable under restricted SecurityContexts (e.g., OpenShift), causing Triton/Inductor cache failures
+   - **Symptom**: vLLM may fail to write compilation caches, leading to performance degradation or startup failures
+   - **Present in**: `precise-prefix-cache-aware`, `tiered-prefix-cache`, and other advanced guides
+   - **Missing from**: `optimized-baseline/modelserver/gpu/vllm/patch-vllm.yaml`
+
+2. **DO_NOT_TRACK Environment Variable**
+   - **Problem**: vLLM usage telemetry writes to `/.config` fail under restricted SecurityContexts (e.g., OpenShift)
+   - **Symptom**: Permission denied errors when vLLM attempts to write telemetry data
+   - **Present in**: `precise-prefix-cache-aware`, `pd-disaggregation/hpu`, and `optimized-baseline/hpu`
+   - **Missing from**: `optimized-baseline/modelserver/gpu/vllm/patch-vllm.yaml` and other GPU variants
+
+**Solution**: Add the missing configurations to your kustomization patch file. Create a custom patch or modify your deployment configuration:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: decode
+spec:
+  template:
+    spec:
+      containers:
+        - name: modelserver
+          env:
+            # Disable vLLM usage telemetry — its writes to /.config fail
+            # under restricted SecurityContexts (e.g. OpenShift).
+            - name: DO_NOT_TRACK
+              value: "1"
+          volumeMounts:
+            - mountPath: /dev/shm
+              name: shm
+            - mountPath: /.cache
+              name: torch-compile-cache
+            # vllm/vllm-openai's Triton/Inductor caches at /.triton, which is
+            # not writable under restricted SecurityContexts (e.g. OpenShift).
+            - mountPath: /.triton
+              name: triton-cache
+      volumes:
+        - name: shm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 20Gi
+        - name: torch-compile-cache
+          emptyDir: {}
+        - name: triton-cache
+          emptyDir: {}
+```
+
+**How to Apply**:
+
+1. **Option A - Create a custom patch file**:
+   ```bash
+   # Copy the guide to your deployments directory
+   cp -r ${LLMD_PATH}/guides/optimized-baseline deployments/my-deployment
+   
+   # Edit the patch file to add the missing configurations
+   vi deployments/my-deployment/modelserver/gpu/vllm/patch-vllm.yaml
+   
+   # Deploy using your custom configuration
+   kustomize build deployments/my-deployment/modelserver/gpu/vllm/ | kubectl apply -n ${NAMESPACE} -f -
+   ```
+
+2. **Option A - Add as a separate patch in kustomization.yaml**:
+   ```yaml
+   # In your kustomization.yaml
+   patches:
+     - path: patch-vllm.yaml
+     - path: patch-triton-cache.yaml  # Your new patch file
+   ```
+
+**Reference Implementations**:
+- Complete example: `${LLMD_PATH}/guides/precise-prefix-cache-aware/modelserver/gpu/vllm/patch-vllm.yaml`
+- Lines 60-63: Triton cache volume mount
+- Lines 44-45: DO_NOT_TRACK environment variable
+- Lines 84-85: Triton cache volume definition
+
+**Note**: These optimizations are particularly important when:
+- Running on OpenShift or other platforms with restricted SecurityContexts
+- Using vLLM with Triton compilation
+- Deploying in production environments with strict security policies
+- Experiencing permission-related errors during model loading or inference
+
+**Related Guides with Correct Implementation**:
+- `precise-prefix-cache-aware` - All accelerator variants (GPU, CPU, XPU, AMD, TPU, HPU)
+- `pd-disaggregation` - HPU variant
+- `tiered-prefix-cache` - Storage offloading configurations
