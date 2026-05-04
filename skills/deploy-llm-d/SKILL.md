@@ -211,11 +211,36 @@ kustomize build guides/<guide>/modelserver/<accelerator>/<server>/ | kubectl app
    - Check PVCs (if applicable)
 
 3. **Connectivity test:**
-   - Expose the endpoint using the current verification guide: port-forward, external IP, ingress, or route as described in `${LLMD_PATH}/guides/02_verifying_a_guide.md`
-   - Test endpoint: `curl ${ENDPOINT}/v1/models`
-   - Send test request: `curl ${ENDPOINT}/v1/completions -d {...}`
-   - Query `/v1/models` first and use the actual returned model name in completion requests
-   Model loading can take several minutes depending on model size
+   - **MANDATORY WORKFLOW - You MUST follow these exact steps:**
+   
+   **Step 1: Generate verification script**
+   - Create a shell script named `verify-connectivity-${NAMESPACE}.sh` containing:
+     - Commands to expose the endpoint (port-forward, external IP, ingress, or route as described in `${LLMD_PATH}/guides/02_verifying_a_guide.md`)
+     - Test endpoint: `curl ${ENDPOINT}/v1/models`
+     - Send test request: `curl ${ENDPOINT}/v1/completions -d {...}`
+     - Query `/v1/models` first and use the actual returned model name in completion requests
+   - The script must be non-interactive and include all necessary commands
+   - Model loading can take several minutes depending on model size
+   
+   **Step 2: MANDATORY - Ask user permission using `ask_followup_question`**
+   - **You MUST use `ask_followup_question` tool - this is NON-NEGOTIABLE**
+   - Show the user the script path and ask for permission to execute it
+   - Example:
+     ```
+     <ask_followup_question>
+     <question>I've created a connectivity verification script at verify-connectivity-${NAMESPACE}.sh. Would you like me to execute it to test the endpoint?</question>
+     <follow_up>
+     <suggest>Yes, run the verification script</suggest>
+     <suggest>No, I'll run it manually later</suggest>
+     </follow_up>
+     </ask_followup_question>
+     ```
+   
+   **Step 3: Execute only after approval**
+   - Only if user responds "Yes", execute: `bash verify-connectivity-${NAMESPACE}.sh`
+   - If user responds "No", inform them they can run it manually when ready
+   
+   **CRITICAL: You cannot skip Step 2. Executing connectivity tests without using `ask_followup_question` first is strictly forbidden.**
 
 
 4. **Performance check:**
