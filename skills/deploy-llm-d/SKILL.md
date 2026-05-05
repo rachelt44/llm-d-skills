@@ -210,7 +210,33 @@ kustomize build guides/<guide>/modelserver/<accelerator>/<server>/ | kubectl app
    - HTTPRoute shows Accepted
    - Check PVCs (if applicable)
 
-3. **Connectivity test:**
+3. **Deployment readiness test (non-intrusive):**
+   - **Purpose:** Verify the llm-d stack is operational without sending inference requests
+   - **This test does NOT populate the KV cache**
+   - Check deployment readiness:
+     ```bash
+     kubectl get deployment -n ${NAMESPACE}
+     kubectl get inferencepool -n ${NAMESPACE}
+     kubectl get gateway -n ${NAMESPACE}
+     kubectl get httproute -n ${NAMESPACE}
+     ```
+   - Verify all resources show healthy status:
+     - Deployments: READY column shows desired/current match (e.g., 1/1)
+     - InferencePool: STATUS shows "Ready"
+     - Gateway: PROGRAMMED shows "True"
+     - HTTPRoute: ACCEPTED shows "True"
+   - Check service endpoints are configured:
+     ```bash
+     kubectl get svc -n ${NAMESPACE}
+     kubectl get endpoints -n ${NAMESPACE}
+     ```
+   - Verify pods are ready and not restarting:
+     ```bash
+     kubectl get pods -n ${NAMESPACE} -o wide
+     ```
+   - **Success criteria:** All resources show healthy status, pods are Running with READY 1/1, no restarts
+
+4. **Connectivity test:**
    - **MANDATORY WORKFLOW - You MUST follow these exact steps:**
    
    **Step 1: Generate verification script**
