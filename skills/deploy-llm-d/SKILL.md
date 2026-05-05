@@ -256,8 +256,8 @@ kustomize build guides/<guide>/modelserver/<accelerator>/<server>/ | kubectl app
      <ask_followup_question>
      <question>I've created a connectivity verification script at verify-connectivity-${NAMESPACE}.sh. Would you like me to execute it to test the endpoint?</question>
      <follow_up>
+      <suggest>No, I'll run it manually later</suggest>
      <suggest>Yes, run the verification script</suggest>
-     <suggest>No, I'll run it manually later</suggest>
      </follow_up>
      </ask_followup_question>
      ```
