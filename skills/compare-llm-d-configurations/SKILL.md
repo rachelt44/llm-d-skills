@@ -302,6 +302,7 @@ Use this structure:
 > For latency/TTFT/ITL/error rate, negative delta means Run B is better.
 
 ## KV-Cache Performance Analysis
+Note: If metrics in "actual cache totals" could not be pulled, skip to "time-averaged cache hit rates". If none could be collected, skip the KV-Cache Performance Analysis section.
 
 ### Actual Cache Totals (Authoritative)
 Extract from `results/metrics/processed/metrics_summary.json` using cumulative counter totals:
