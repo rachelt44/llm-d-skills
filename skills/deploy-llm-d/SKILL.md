@@ -239,7 +239,26 @@ kustomize build guides/<guide>/modelserver/<accelerator>/<server>/ | kubectl app
 4. **Connectivity test:**
    - **MANDATORY WORKFLOW - You MUST follow these exact steps:**
    
-   **Step 1: Generate verification script**
+   **Step 1: MANDATORY - Ask user if they want to generate verification script**
+   - **You MUST use `ask_followup_question` tool - this is NON-NEGOTIABLE**
+   - Explain what the verification script will do in a few words
+   - Example:
+     ```
+     <ask_followup_question>
+     <question>I can generate a verification script that will:
+     - Expose the llm-d endpoint (via port-forward)
+     - Test the /v1/models endpoint
+     - Send a test completion request
+     
+     Would you like me to generate this verification script?</question>
+     <follow_up>
+      <suggest>Yes, generate the verification script</suggest>
+      <suggest>No</suggest>
+     </follow_up>
+     </ask_followup_question>
+     ```
+   
+   **Step 2: Generate and show script (only if user agreed in Step 1)**
    - Create a shell script named `verify-connectivity-${NAMESPACE}.sh` containing:
      - Commands to expose the endpoint (port-forward, external IP, ingress, or route as described in `${LLMD_PATH}/guides/02_verifying_a_guide.md`)
      - Test endpoint: `curl ${ENDPOINT}/v1/models`
@@ -247,26 +266,27 @@ kustomize build guides/<guide>/modelserver/<accelerator>/<server>/ | kubectl app
      - Query `/v1/models` first and use the actual returned model name in completion requests
    - The script must be non-interactive and include all necessary commands
    - Model loading can take several minutes depending on model size
+   - **After creating the script, show its full content to the user**
    
-   **Step 2: MANDATORY - Ask user permission using `ask_followup_question`**
+   **Step 3: MANDATORY - Ask user permission to execute using `ask_followup_question`**
    - **You MUST use `ask_followup_question` tool - this is NON-NEGOTIABLE**
-   - Show the user the script path and ask for permission to execute it
+   - Ask for permission to execute the script
    - Example:
      ```
      <ask_followup_question>
-     <question>I've created a connectivity verification script at verify-connectivity-${NAMESPACE}.sh. Would you like me to execute it to test the endpoint?</question>
+     <question>I've created the connectivity verification script at verify-connectivity-${NAMESPACE}.sh (shown above). Would you like me to execute it to test the endpoint?</question>
      <follow_up>
-      <suggest>No, I'll run it manually later</suggest>
-     <suggest>Yes, run the verification script</suggest>
+      <suggest>Yes, run the verification script</suggest>
+      <suggest>No</suggest>
      </follow_up>
      </ask_followup_question>
      ```
    
-   **Step 3: Execute only after approval**
+   **Step 4: Execute only after approval**
    - Only if user responds "Yes", execute: `bash verify-connectivity-${NAMESPACE}.sh`
    - If user responds "No", inform them they can run it manually when ready
    
-   **CRITICAL: You cannot skip Step 2. Executing connectivity tests without using `ask_followup_question` first is strictly forbidden.**
+   **CRITICAL: You cannot skip Step 1 or Step 3. Generating or executing connectivity tests without using `ask_followup_question` first is strictly forbidden.**
 
 
 4. **Performance check:**
