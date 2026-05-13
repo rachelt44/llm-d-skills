@@ -237,7 +237,7 @@ kustomize build guides/<guide>/modelserver/<accelerator>/<server>/ | kubectl app
    - **Success criteria:** All resources show healthy status, pods are Running with READY 1/1, no restarts
 
 4. **Connectivity test:**
-   - **MANDATORY WORKFLOW - You MUST follow these exact steps:**
+   - **MANDATORY WORKFLOW - You MUST follow this step:**
    
    **Step 1: MANDATORY - Ask user if they want to generate verification script**
    - **You MUST use `ask_followup_question` tool - this is NON-NEGOTIABLE**
@@ -258,41 +258,11 @@ kustomize build guides/<guide>/modelserver/<accelerator>/<server>/ | kubectl app
      </ask_followup_question>
      ```
    
-   **Step 2: Generate and show script (only if user agreed in Step 1)**
-   - Create a shell script named `verify-connectivity-${NAMESPACE}.sh` containing:
-     - Commands to expose the endpoint (port-forward, external IP, ingress, or route as described in `${LLMD_PATH}/guides/02_verifying_a_guide.md`)
-     - Test endpoint: `curl ${ENDPOINT}/v1/models`
-     - Send test request: `curl ${ENDPOINT}/v1/completions -d {...}`
-     - Query `/v1/models` first and use the actual returned model name in completion requests
-   - The script must be non-interactive and include all necessary commands
-   - Model loading can take several minutes depending on model size
-   - **After creating the script, show its full content to the user**
+   **If user agrees to generate the script:**
+   - Read and follow the detailed instructions in [`references/connectivity-verification.md`](references/connectivity-verification.md)
+   - The reference file contains Steps 2-4 for generating, showing, and executing the verification script
    
-   **Step 3: MANDATORY - Ask user permission to execute using `ask_followup_question`**
-   - **You MUST use `ask_followup_question` tool - this is NON-NEGOTIABLE**
-   - Ask for permission to execute the script
-   - Example:
-     ```
-     <ask_followup_question>
-     <question>I've created the connectivity verification script at verify-connectivity-${NAMESPACE}.sh (shown above). Would you like me to execute it to test the endpoint?</question>
-     <follow_up>
-      <suggest>Yes, run the verification script</suggest>
-      <suggest>No</suggest>
-     </follow_up>
-     </ask_followup_question>
-     ```
-   
-   **Step 4: Execute only after approval**
-   - Only if user responds "Yes", execute: `bash verify-connectivity-${NAMESPACE}.sh`
-   - If user responds "No", inform them they can run it manually when ready
-   
-   **CRITICAL: You cannot skip Step 1 or Step 3. Generating or executing connectivity tests without using `ask_followup_question` first is strictly forbidden.**
-
-
-4. **Performance check:**
-   - Monitor resource usage: `kubectl top pods -n {namespace}`
-   - Check GPU utilization (if applicable)
-   - Verify response times meet requirements
+   **CRITICAL: You cannot skip Step 1. Always ask the user first before reading the connectivity verification instructions.**
 
 **Success Criteria:**
 - All required pods are Running state with N/N ready
