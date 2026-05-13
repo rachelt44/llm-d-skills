@@ -252,8 +252,8 @@ kustomize build guides/<guide>/modelserver/<accelerator>/<server>/ | kubectl app
      
      Would you like me to generate this verification script?</question>
      <follow_up>
-      <suggest>Yes, generate the verification script</suggest>
       <suggest>No</suggest>
+      <suggest>Yes, generate the verification script</suggest>
      </follow_up>
      </ask_followup_question>
      ```

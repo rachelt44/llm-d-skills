@@ -28,8 +28,8 @@ Ask for permission to execute the script using this example:
 <ask_followup_question>
 <question>I've created the connectivity verification script at verify-connectivity-${NAMESPACE}.sh (shown above). Would you like me to execute it to test the endpoint?</question>
 <follow_up>
- <suggest>Yes, run the verification script</suggest>
  <suggest>No</suggest>
+ <suggest>Yes, run the verification script</suggest>
 </follow_up>
 </ask_followup_question>
 ```
