@@ -1,5 +1,5 @@
 ---
-name: kv-offload-load-designer
+name: kv-cache-pressure-load-designer
 description: >
   Designs a benchmark load configuration (concurrency, stages, num_requests) that will drive
   GPU KV cache utilization beyond the GPU's capacity — causing cache evictions regardless of
